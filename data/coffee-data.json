@@ -1,0 +1,26 @@
+[
+	{
+		"id": "l1MYfu5YWHc",
+		"name": "Two Dungeon Espresso",
+		"description": "Life gets better with espresso. Start your day with the refreshing taste of our personal favorite Espresso!",
+		"rating": 5,
+		"price": 9.99,
+		"image": "/assets/images/nathan-dumlao-coffee.jpeg"
+	},
+	{
+		"id": "l1MYfu5YWHd",
+		"name": "Two Dungeon Latte",
+		"description": "Life gets better with latte. Start your day with the refreshing taste of our personal favorite Latte!",
+		"rating": 4,
+		"price": 8.99,
+		"image": "/assets/images/nathan-dumlao-coffee-2.jpeg"
+	},
+	{
+		"id": "l1MYfu5YWHe",
+		"name": "Two Dungeon Black",
+		"description": "Life gets better with black coffee. Start your day with the refreshing taste of our personal favorite Black Coffee!",
+		"rating": 4.5,
+		"price": 5.99,
+		"image": "/assets/images/nathan-dumlao-coffee-3.jpeg"
+	}
+]
