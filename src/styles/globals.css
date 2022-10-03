@@ -2,15 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-#__next {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
 @layer base {
-  html {
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
     font-family: 'Bellefair', system-ui, sans-serif;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  #__next {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  #__next main {
+    flex: 1 0 auto;
+  }
+
+  #__next footer {
+    flex-shrink: 0;
+  }
+
+  @media not all and (min-resolution: 0.001dpcm) {
+    img[loading='lazy'] {
+      clip-path: inset(0.5px);
+    }
   }
 }
 
@@ -20,6 +42,18 @@
   }
 
   .btn {
-    @apply p-4 px-6 font-bold tracking-widest uppercase border rounded-sm shadow-md cursor-pointer border-secondary font-heading;
+    @apply p-3 px-6 sm:p-4 sm:px-6 sm:font-bold tracking-widest uppercase border rounded-sm shadow-md cursor-pointer border-secondary font-heading;
+  }
+
+  .content {
+    @apply flex-auto relative overflow-hidden flex justify-center items-center p-6;
+  }
+
+  .content__section {
+    @apply container flex flex-col gap-4 sm:flex-row;
+  }
+
+  .form-group {
+    @apply flex flex-col items-start gap-1 py-2;
   }
 }

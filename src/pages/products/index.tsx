@@ -1,18 +1,45 @@
-import Head from 'next/head';
+import Head from "next/head";
+import { Card } from "@components/card";
+import { IProduct } from "@interfaces/product";
+import products from "../../data/coffee-data.json";
 
-const Products = () => {
-    return (
-        <>
-            <Head>
-                <title>Beans Coffee Shopee - Experience the best the world has to offer</title>
-            </Head>
-            <main className="flex-1">
-                <section className='container flex flex-col gap-4 p-4 pt-2 sm:flex-row'>
-                    All products
-                </section>
-            </main>
-        </>
-    );
+const Products = ({ products }: { products: IProduct[] }) => {
+  return (
+    <>
+      <Head>
+        <title>
+          All Products | Beans Coffee Shoppe - Experience the best the world has
+          to offer
+        </title>
+      </Head>
+      <main className="content">
+        <section className="content__section">
+          <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+            {products.map((product) => (
+              <Card
+                key={product.id}
+                id={product.id}
+                title={product.title}
+                description={product.description}
+                priceUSD={product.priceUSD}
+                priceSOL={product.priceSOL}
+                imageURL={product.imageURL}
+                rating={product.rating}
+              />
+            ))}
+          </div>
+        </section>
+      </main>
+    </>
+  );
 };
+
+export async function getStaticProps() {
+  return {
+    props: {
+      products: products,
+    },
+  };
+}
 
 export default Products;

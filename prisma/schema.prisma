@@ -39,7 +39,8 @@ model Product {
   slug        String   @unique
   title       String
   description String
-  price       Float
+  priceUSD    Float
+  priceSOL    Float
   order       Order?   @relation(fields: [orderId], references: [id])
   orderId     String?
   created_at  DateTime @default(now())
