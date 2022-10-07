@@ -12,9 +12,9 @@ export const CartIcon = () => {
 
   return (
     <Link href="/checkout" passHref>
-      <a className="cursor-pointer">
-        <FontAwesomeIcon icon={faCartShopping} className="w-8 h-8 text-primary" />
-        <span className="absolute top-3 text-md left-[0.8rem] w-7 h-7 bg-default text-primary shadow-lg rounded-2xl flex justify-center items-center font-bold font-heading">
+      <a className="flex cursor-pointer">
+        <FontAwesomeIcon icon={faCartShopping} className="w-12 h-12 text-primary" />
+        <span className="absolute top-[-0.2rem] text-md left-[1.4rem] w-9 h-9 bg-default text-primary shadow-lg rounded-2xl flex justify-center items-center font-bold font-heading">
           <span>{cartItemCount}</span>
         </span>
       </a>

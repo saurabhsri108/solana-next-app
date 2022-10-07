@@ -34,10 +34,8 @@ export const Card = ({
       })
     );
     if (type === "buy") {
-      console.log("Buy");
       return router.push("/checkout");
     }
-    console.log("Cart");
     return;
   };
 
@@ -48,7 +46,7 @@ export const Card = ({
           src={imageURL}
           alt={title}
           fill
-          sizes="100vw"
+          sizes="100%"
           style={{ objectFit: "cover" }}
           className="group-hover:opacity-75"
         />

@@ -42,7 +42,7 @@
   }
 
   .btn {
-    @apply p-3 px-6 sm:p-4 sm:px-6 sm:font-bold tracking-widest uppercase border rounded-sm shadow-md cursor-pointer border-secondary font-heading;
+    @apply p-3 px-6 sm:p-4 sm:px-6 sm:font-bold tracking-widest uppercase border rounded-sm shadow-md cursor-pointer border-secondary font-heading !important;
   }
 
   .content {

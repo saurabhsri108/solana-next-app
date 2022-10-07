@@ -14,7 +14,7 @@ const Header = () => {
     <header className="p-6">
       <section className="container flex items-center justify-between ">
         <Logo isHidden={false} />
-        <nav className="hidden sm:flex sm:items-end sm:justify-between sm:flex-1">
+        <nav className="hidden lg:flex lg:items-end lg:justify-between lg:flex-1">
           <Navigation />
           <ActionNavigations />
         </nav>

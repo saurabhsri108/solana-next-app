@@ -19,10 +19,30 @@ pay for their online purchases.
 
 ## Todo
 
-- [ ] Design all the pages in NextJS - Home page, Product page
-- [ ] Setup Prisma and create User, Profile, Product, and Order Schema
-- [ ] Add Auth0 authentication flow
-- [ ] Add the user data to the MySQL database
-- [ ] Add tRPC and Zod
+- [x] Design all the pages in NextJS - Home page, Product page
+- [x] Setup Prisma and create User, Product, and Order Schema
+- [x] Add Auth0 authentication flow
+  - [x] New user can click on Login button.
+  - [x] This takes the user to Auth0 UI.
+    - [x] User chooses email and password:
+      - [x] Auth0 manages the sign-up and login.
+      - [x] Sends a mail for verifying email.
+      - [x] Sets up a flag to indicate sign-up: Done via Auth Pipeline -> Rules
+      - [x] Capture signup flag to fill the User table on our end.
+      - [x] Check for email_verified flag and show toast notification for the same to the user.
+      - [x] If email_verfied === true and not the first login (signup): don't interact with the database.
+    - [x] User chooses social login - google here
+      - [x] Auth0 manages the flow
+      - [x] Automatic verification of email.
+      - [x] Sets a flag to indicate sign-up: Done via Auth pipeline -> rules
+      - [x] Capture signup flag to fill the User table on our end.
+    - [x] User logins with both interchangably
+      - [x] Use upsert method to create or update user data based on email.
+  - [x] Once auth is complete, show the logout and select wallet buttons.
+  - [x] On select wallet action, allow selection of solana wallet
+- [x] Add the user data to the MySQL database
+- [x] Add tRPC and Zod
 - [ ] Make the product data dynamic coming from database
 - [ ] Implement Solana Pay
+- [ ] Store the orders of users in the db
+- [ ] Test the complete app
