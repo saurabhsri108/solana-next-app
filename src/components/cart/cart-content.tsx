@@ -6,7 +6,9 @@ import { useAppSelector } from "../../stores/hooks";
 
 import type { IProduct } from "@interfaces/product";
 
-const CartContent = ({ paymentMethod }: { paymentMethod: "usd" | "sol" }) => {
+const CartContent = ({ paymentMethod }: {
+  paymentMethod: "usd" | "sol";
+}) => {
   const cartItems: IProduct[] = useAppSelector((state) => state.cart.items);
   const cartItemsCount: number = useAppSelector(
     (state) => state.cart.itemCount
@@ -16,6 +18,8 @@ const CartContent = ({ paymentMethod }: { paymentMethod: "usd" | "sol" }) => {
     return router.push("/products");
   };
 
+  console.log({ paymentMethod });
+
   let cartContent = <p>Loading cart items...</p>;
   if (Array.isArray(cartItems) && cartItems.length === 0) {
     cartContent = (
@@ -24,7 +28,7 @@ const CartContent = ({ paymentMethod }: { paymentMethod: "usd" | "sol" }) => {
           No items in the cart!
         </p>
         <button
-          className="btn bg-primary text-white"
+          className="text-white btn bg-primary"
           onClick={addProductsToCart}
         >
           Add products to cart
@@ -37,6 +41,7 @@ const CartContent = ({ paymentMethod }: { paymentMethod: "usd" | "sol" }) => {
     cartContent = (
       <Fragment>
         {cartItems.map((item) => {
+          console.log({ item });
           totalChargesSOL = Number(
             (totalChargesSOL + item.priceSOL).toFixed(2)
           );
@@ -76,7 +81,7 @@ const CartContent = ({ paymentMethod }: { paymentMethod: "usd" | "sol" }) => {
               </div>
               <div className="flex items-center justify-between">
                 <span>Shipping Charges</span>
-                <span>◎{(totalChargesSOL * 0.1).toFixed(2)}</span>
+                <span>◎{(totalChargesSOL * 0.2).toFixed(2)}</span>
               </div>
             </Fragment>
           )}
@@ -87,7 +92,7 @@ const CartContent = ({ paymentMethod }: { paymentMethod: "usd" | "sol" }) => {
             <h2>${(totalChargesUSD + totalChargesUSD * 0.2).toFixed(2)}</h2>
           )}
           {paymentMethod === "sol" && (
-            <h2>◎{(totalChargesSOL + totalChargesSOL * 0.1).toFixed(2)}</h2>
+            <h2>◎{(totalChargesSOL + totalChargesSOL * 0.2).toFixed(2)}</h2>
           )}
         </section>
       </Fragment>

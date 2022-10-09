@@ -44,15 +44,25 @@ model Product {
 }
 
 model Order {
-  id         String       @id @default(cuid())
-  user       User         @relation(fields: [userId], references: [id])
-  userId     String
-  products   String
-  status     ORDER_STATUS @default(IN_CART)
-  created_at DateTime     @default(now())
-  updated_at DateTime     @updatedAt
+  id                         String         @id @default(cuid())
+  user                       User           @relation(fields: [userId], references: [id])
+  userId                     String
+  products                   String
+  paymentMethod              PAYMENT_METHOD @default(SOL)
+  price                      Float?         @default(0)
+  shipping                   Float?         @default(0)
+  totalPrice                 Float?         @default(0)
+  transactionReferenceBase64 String?        @db.MediumText
+  status                     ORDER_STATUS   @default(IN_CART)
+  created_at                 DateTime       @default(now())
+  updated_at                 DateTime       @updatedAt
 
   @@index([userId, status])
+}
+
+enum PAYMENT_METHOD {
+  SOL
+  USDC
 }
 
 enum ORDER_STATUS {

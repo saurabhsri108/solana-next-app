@@ -7,3 +7,8 @@ export const orderSchema = z.object({
     status: z.enum(['IN_CART', 'COMPLETED']).optional()
 });
 export type OrderSchema = z.infer<typeof orderSchema>;
+
+export const orderSuccessSchema = z.object({
+    id: z.string().optional()
+});
+export type OrderSuccessSchema = z.infer<typeof orderSuccessSchema>;

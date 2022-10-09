@@ -1,25 +1,42 @@
 import Head from "next/head";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { toast } from 'react-toastify';
+import Link from 'next/link';
+import { IMakeTransactionInputData, IMakeTransactionOutputData } from 'src/schema/solana.schema';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { Keypair, PublicKey, Transaction } from '@solana/web3.js';
+import { trpc } from 'src/utils/trpc';
+import { UseQueryResult } from 'react-query';
+import { useRouter } from 'next/router';
+import { findReference, FindReferenceError } from '@solana/pay';
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 import ContactInformation from "@components/forms/contact-information";
 import ShippingInformation from "@components/forms/shipping-information";
 import CartContent from "@components/cart/cart-content";
-import { Loading } from '@components/loaders';
+import { ICheckoutForm, IShippingForm } from "@interfaces/form";
 
 import { useAppSelector } from "../../stores/hooks";
+import { Toast } from 'react-toastify/dist/types';
 
-import { ICheckoutForm, IShippingForm } from "@interfaces/form";
-import Link from 'next/link';
 
 const Checkout = () => {
+  const router = useRouter();
+  const { connection } = useConnection();
+  const { publicKey, sendTransaction } = useWallet(); // sendTransaction is used to let the buyer approve the transaction
   const cartItemsCount: number = useAppSelector(
     (state) => state.cart.itemCount
   );
+  const userId = useAppSelector(state => state.user.userId);
+  const cartItems = useAppSelector(state => state.cart.items);
   const [paymentMethod, setPaymentMethod] = useState<"sol" | "usd">("usd");
+  const [transaction, setTransaction] = useState<Transaction | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [transactionSent, setTransactionSent] = useState<boolean>(false);
+  const reference = useMemo(() => Keypair.generate().publicKey, []);
   const [checkoutFormData, setCheckoutFormData] = useState<ICheckoutForm>({
     email: "",
     phone: "",
@@ -41,6 +58,10 @@ const Checkout = () => {
   const isShippingFormValidated = () => {
     return true;
   };
+  const { data: orderData }: UseQueryResult<{ id: string, products: string; }> = trpc.useQuery(['orders.get-order', { userId: userId!, status: "IN_CART" }], { enabled: !!userId });
+
+
+  console.log({ transaction, message, orderData });
 
   const canProceed =
     Boolean(cartItemsCount) &&
@@ -55,6 +76,86 @@ const Checkout = () => {
     Boolean(shippingFormData.pincode) &&
     isCheckoutFormValidated() &&
     isShippingFormValidated();
+
+  useEffect(() => {
+    if (transaction && message) {
+      toast.info(`${message} Please approve the transaction using your wallet`, { toastId: "creating-transaction", autoClose: 5000, position: "top-center" });
+      trySendTransaction();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transaction, message]);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const signatureInfo = await findReference(connection, reference);
+        console.log({ signatureInfo });
+
+        toast.success("Congratulations! Payment successful...", { toastId: 'payment-success', position: "top-center" });
+        router.push('/checkout/confirmed');
+      } catch (e) {
+        if (e instanceof FindReferenceError) {
+          return;
+        }
+        console.log("Unknown error", e);
+        toast.error("Unknown Error");
+      }
+    }, 500);
+    return () => {
+      clearInterval(interval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactionSent]);
+
+  async function trySendTransaction() {
+    if (!transaction) {
+      return;
+    }
+    try {
+      await sendTransaction(transaction, connection);
+      setTransactionSent(true);
+    } catch (error: any) {
+      toast.error(error.message, { toastId: 'send-transaction-error', autoClose: 4000 });
+      console.log(error);
+    }
+  }
+
+  const handlePayment = async () => {
+    if (!publicKey) {
+      toast.info("You must connect your wallet for this transaction to proceed", { toastId: "wallet-connect", autoClose: 2000 });
+    }
+    const searchParams = new URLSearchParams();
+    const productIds = cartItems.map(item => item.id).toString();
+    searchParams.append('products', productIds);
+    searchParams.append('reference', reference.toString());
+    searchParams.append('paymentMethod', paymentMethod);
+
+    const body: IMakeTransactionInputData = {
+      walletAddress: (publicKey as PublicKey).toString(),
+      userId: userId!,
+      orderId: orderData?.id!
+    };
+
+    const response = await fetch(`/api/solana/make-transaction?${searchParams.toString()}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    const json = await response.json() as IMakeTransactionOutputData;
+
+    if (response.status !== 200) {
+      console.error(json);
+      return;
+    }
+
+    const transaction = Transaction.from(Buffer.from(json.transaction, 'base64'));
+    setTransaction(transaction);
+    setMessage(json.message);
+    console.log({ transaction });
+  };
 
   return (
     <Fragment>
@@ -89,9 +190,10 @@ const Checkout = () => {
               />
               <button
                 className="w-full p-4 mt-3 text-xl lg:p-6 lg:text-2xl bg-primary text-default btn disabled:bg-secondary disabled:cursor-not-allowed"
+                onClick={handlePayment}
                 disabled={!canProceed}
               >
-                Proceed to payment
+                Complete Payment
               </button>
             </div>
           </section>

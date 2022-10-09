@@ -1,7 +1,7 @@
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime';
 import * as trpc from '@trpc/server';
 import { createRouter } from '../createRouter';
-import { OrderSchema, orderSchema } from 'src/schema/order.schema';
+import { OrderSchema, orderSchema, OrderSuccessSchema, orderSuccessSchema } from 'src/schema/order.schema';
 import { Prisma } from '@prisma/client';
 import { string } from 'zod';
 
@@ -68,6 +68,31 @@ export const orderRouter = createRouter()
             }
         }
     })
+    .mutation('update-transaction-status', {
+        input: orderSuccessSchema,
+        resolve: async ({ ctx, input }) => {
+            const { id } = input;
+            try {
+                let order: OrderSuccessSchema;
+                const existingOrder = await ctx.prisma.order.count({
+                    where: { userId: id, status: "IN_CART" }
+                });
+                const status = "COMPLETED";
+                if (existingOrder) {
+                    order = await ctx.prisma.$queryRaw`
+                        UPDATE
+                            railway.Order
+                        SET
+                            railway.Order.status=${status},
+                        WHERE railway.Order.id=${id}
+                    `;
+                    return order;
+                }
+            } catch (error) {
+                handleError(error);
+            }
+        }
+    })
     .query('get-order', {
         input: orderSchema,
         resolve: async ({ ctx, input }) => {
@@ -79,7 +104,7 @@ export const orderRouter = createRouter()
                 if (!orderCount) {
                     return {};
                 }
-                const order: { products: string; }[] = await ctx.prisma.$queryRaw`SELECT railway.Order.products FROM railway.Order WHERE railway.Order.userId=${userId} AND railway.Order.status=${status}`;
+                const order: { products: string; }[] = await ctx.prisma.$queryRaw`SELECT railway.Order.id,railway.Order.products FROM railway.Order WHERE railway.Order.userId=${userId} AND railway.Order.status=${status}`;
                 return order[0];
             } catch (error) {
                 handleError(error);
