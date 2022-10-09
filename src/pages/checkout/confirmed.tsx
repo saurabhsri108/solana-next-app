@@ -1,12 +1,11 @@
-import { withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { Fragment, useEffect, useState } from "react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
-import { toast } from 'react-toastify';
-import { useAppSelector } from 'src/stores/hooks';
+import { useAppDispatch, useAppSelector } from 'src/stores/hooks';
+import { clearCart } from 'src/stores/slices/cart-slice';
 import { trpc } from 'src/utils/trpc';
 
 function Confirmed() {
@@ -33,18 +32,30 @@ function Confirmed() {
 }
 
 function ConfirmedPage() {
-    const { mutate: orderMutate, isError, isLoading, isIdle, isSuccess } = trpc.useMutation(['orders.update-transaction-status']);
+    const { mutate: orderMutate } = trpc.useMutation(['orders.update-transaction-status']);
     const userId = useAppSelector(state => state.user.userId);
+    const orderSignature = useAppSelector(state => state.cart.orderSignature);
+    const dispatch = useAppDispatch();
     useEffect(() => {
-        if (!!userId) {
+        if (!userId) {
             return;
         }
-        orderMutate({
-            id: userId!
-        });
+        if (!!orderSignature) {
+            const { slot, blockTime, signatureInfo } = orderSignature!;
+            orderMutate({
+                userId: userId,
+                slot: slot,
+                blockTime: blockTime,
+                signatureInfo: signatureInfo
+            });
+            localStorage.setItem('productIds', '');
+            dispatch(
+                clearCart()
+            );
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    if (isError || isLoading || isIdle) {
+    if (!userId) {
         return (
             <Fragment>
                 <Head>
@@ -64,26 +75,22 @@ function ConfirmedPage() {
             </Fragment>
         );
     }
-    if (isSuccess) {
-        return (
-            <Fragment>
-                <Head>
-                    <title>
-                        All Products | Beans Coffee Shoppe - Experience the best the world has
-                        to offer
-                    </title>
-                </Head>
-                <main className="content">
-                    <section className="flex-col items-center content__section">
-                        <h1 className="text-4xl">Thankyou, enjoy your coffee!</h1>
-                        <div className='h-80 w-80'><Confirmed /></div>
-                    </section>
-                </main >
-            </Fragment>
-        );
-    }
-
-    return null;
+    return (
+        <Fragment>
+            <Head>
+                <title>
+                    All Products | Beans Coffee Shoppe - Experience the best the world has
+                    to offer
+                </title>
+            </Head>
+            <main className="content">
+                <section className="flex-col items-center content__section">
+                    <h1 className="text-4xl">Thankyou, enjoy your coffee!</h1>
+                    <div className='h-80 w-80'><Confirmed /></div>
+                </section>
+            </main >
+        </Fragment>
+    );
 }
 
 export default withPageAuthRequired(ConfirmedPage);

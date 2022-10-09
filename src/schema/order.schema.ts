@@ -9,6 +9,9 @@ export const orderSchema = z.object({
 export type OrderSchema = z.infer<typeof orderSchema>;
 
 export const orderSuccessSchema = z.object({
-    id: z.string().optional()
+    userId: z.string(),
+    blockTime: z.number(),
+    signatureInfo: z.string(),
+    slot: z.number()
 });
 export type OrderSuccessSchema = z.infer<typeof orderSuccessSchema>;

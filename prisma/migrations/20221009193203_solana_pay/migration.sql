@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `Order` ADD COLUMN `blockTime` INTEGER NULL,
+    ADD COLUMN `signatureInfo` MEDIUMTEXT NULL,
+    ADD COLUMN `slot` INTEGER NULL;

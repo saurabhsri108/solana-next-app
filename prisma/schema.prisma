@@ -53,6 +53,9 @@ model Order {
   shipping                   Float?         @default(0)
   totalPrice                 Float?         @default(0)
   transactionReferenceBase64 String?        @db.MediumText
+  blockTime                  Int?
+  signatureInfo              String?        @db.MediumText
+  slot                       Int?
   status                     ORDER_STATUS   @default(IN_CART)
   created_at                 DateTime       @default(now())
   updated_at                 DateTime       @updatedAt

@@ -19,12 +19,14 @@ import ShippingInformation from "@components/forms/shipping-information";
 import CartContent from "@components/cart/cart-content";
 import { ICheckoutForm, IShippingForm } from "@interfaces/form";
 
-import { useAppSelector } from "../../stores/hooks";
+import { useAppDispatch, useAppSelector } from "../../stores/hooks";
 import { Toast } from 'react-toastify/dist/types';
+import { addSignatureToOrder } from 'src/stores/slices/cart-slice';
 
 
 const Checkout = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet(); // sendTransaction is used to let the buyer approve the transaction
   const cartItemsCount: number = useAppSelector(
@@ -89,7 +91,13 @@ const Checkout = () => {
     const interval = setInterval(async () => {
       try {
         const signatureInfo = await findReference(connection, reference);
-        console.log({ signatureInfo });
+        dispatch(
+          addSignatureToOrder({
+            blockTime: signatureInfo.blockTime,
+            signatureInfo: signatureInfo.signature,
+            slot: signatureInfo.slot
+          })
+        );
 
         toast.success("Congratulations! Payment successful...", { toastId: 'payment-success', position: "top-center" });
         router.push('/checkout/confirmed');
@@ -123,6 +131,7 @@ const Checkout = () => {
   const handlePayment = async () => {
     if (!publicKey) {
       toast.info("You must connect your wallet for this transaction to proceed", { toastId: "wallet-connect", autoClose: 2000 });
+      return;
     }
     const searchParams = new URLSearchParams();
     const productIds = cartItems.map(item => item.id).toString();

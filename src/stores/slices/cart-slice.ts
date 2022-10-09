@@ -4,11 +4,13 @@ import { IProduct } from "../../interfaces/product";
 
 interface ICartState {
   items: IProduct[];
+  orderSignature: null,
   itemCount: number;
 }
 
 const initialState: ICartState = {
   items: [],
+  orderSignature: null,
   itemCount: 0,
 };
 
@@ -34,9 +36,13 @@ export const cartSlice = createSlice({
     clearCart: (state) => {
       state.items = [];
       state.itemCount = 0;
+      state.orderSignature = null;
+    },
+    addSignatureToOrder: (state, action) => {
+      state.orderSignature = action.payload;
     }
   },
 });
 
-export const { addToCart, deleteFromCart, clearCart } = cartSlice.actions;
+export const { addToCart, deleteFromCart, clearCart, addSignatureToOrder } = cartSlice.actions;
 export default cartSlice.reducer;

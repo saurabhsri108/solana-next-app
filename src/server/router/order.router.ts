@@ -71,20 +71,24 @@ export const orderRouter = createRouter()
     .mutation('update-transaction-status', {
         input: orderSuccessSchema,
         resolve: async ({ ctx, input }) => {
-            const { id } = input;
+            const { userId, blockTime, signatureInfo, slot } = input;
             try {
                 let order: OrderSuccessSchema;
                 const existingOrder = await ctx.prisma.order.count({
-                    where: { userId: id, status: "IN_CART" }
+                    where: { userId, status: "IN_CART" }
                 });
                 const status = "COMPLETED";
+                const oldStatus = "IN_CART";
                 if (existingOrder) {
                     order = await ctx.prisma.$queryRaw`
                         UPDATE
                             railway.Order
                         SET
                             railway.Order.status=${status},
-                        WHERE railway.Order.id=${id}
+                            railway.Order.blockTime=${blockTime},
+                            railway.Order.signatureInfo=${signatureInfo},
+                            railway.Order.slot=${slot}
+                        WHERE railway.Order.userId=${userId} AND railway.Order.status=${oldStatus}
                     `;
                     return order;
                 }
