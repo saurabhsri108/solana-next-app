@@ -48,11 +48,22 @@ pay for their online purchases.
   - [x] Remove products from order table from db on deleteFromCart with status="IN_CART"
   - [x] Storing productIds in the localStorage for quick knowledge of add or remove state -> Security Issue?
 - [ ] Implement Solana Pay
+  - [x] Get Devnet SOL from [Solfaucet](https://solfaucet.com/). Only 1 unit allowed per request.
+  - [x] Complete the SOL Desktop flow.
+  - [ ] Get the USDC from **blank**
+  - [ ] Complete the USDC Desktop Flow.
+  - [ ] Implement SOL and USDC mobile QR Scanner Flow
+  - [ ] Implement Loyalty program
 - [ ] Test the complete app
 
-## Hicups
+## Findings
 
 - Prisma doesn't allow update of single record unless the where clause has a field which is unique. Breaks the case where 2 columns together make a unique constraint and one wants to just update single record using those 2 columns. Solution was to write manual SQL query using Prisma.$queryRaw.
+- Multiple issues could be present due to not much regard to secure the app and hardly any testing. Only manual testing was done up to a certain limit.
+- Implementing tRPC with Auth0 was a pain. First attempt to learn TailwindCSS, tRPC, Auth0 was not easy.
+- Have paid no regard to securing the app to the level of production.
+- Solana Pay implementation was quite easy.
+- @solana/web3.js package is quite huge.
 
 ## Solana Pay
 
