@@ -4,17 +4,17 @@ import type { UseQueryResult } from 'react-query';
 import { useEffect, useState } from 'react';
 import Head from "next/head";
 import Image from "next/future/image";
-import Link from "next/link";
 import { trpc } from 'src/utils/trpc';
 import { useUser } from "@auth0/nextjs-auth0";
 import { toast } from "react-toastify";
+import { useRouter } from 'next/router';
 
 import { addUser } from 'src/stores/slices/user-slice';
+import { useAppDispatch } from 'src/stores/hooks';
+import { addToCart, clearCart } from 'src/stores/slices/cart-slice';
 
 // @ts-ignore
 import homeCoffeeImage from "public/assets/images/ante-samarzija-coffee.jpeg";
-import { useAppDispatch } from 'src/stores/hooks';
-import { addToCart, clearCart } from 'src/stores/slices/cart-slice';
 
 const Home: NextPage = () => {
   const { mutate: register, data: userMutatedData, error: registerError } = trpc.useMutation(['users.register-user']);
@@ -27,6 +27,7 @@ const Home: NextPage = () => {
 
   const { user, error } = useUser();
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -103,6 +104,17 @@ const Home: NextPage = () => {
     fetch('/api/auth/logout').catch(error => console.error(error.message));
   }
 
+  const handleBrowseAll = () => {
+    if (!user) {
+      toast.info('You must log in to browse our products! Redirecting...', { toastId: 'guest-redirect', autoClose: 2000 });
+      setTimeout(() => {
+        router.push('/api/auth/login');
+      }, 3000);
+      return;
+    }
+    return router.push('/products');
+  };
+
   return (
     <>
       <Head>
@@ -131,11 +143,9 @@ const Home: NextPage = () => {
               Experience the genuine taste from the best of beans
             </p>
             <div className="flex flex-row items-center justify-center sm:justify-start sm:gap-4 w-[100%]">
-              <Link href={"/products"} passHref={true}>
-                <button className="btn bg-primary text-default border-primary">
-                  Browse All
-                </button>
-              </Link>
+              <button className="btn bg-primary text-default border-primary" onClick={handleBrowseAll}>
+                Browse All
+              </button>
             </div>
           </div>
         </section>

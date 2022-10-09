@@ -137,7 +137,4 @@ const Checkout = () => {
   );
 };
 
-export default withPageAuthRequired(Checkout, {
-  onRedirecting: () => <Loading />,
-  onError: error => <Fragment>{toast(error.message)}</Fragment>
-});
+export default withPageAuthRequired(Checkout);

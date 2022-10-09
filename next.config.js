@@ -7,9 +7,6 @@ const nextConfig = {
   },
   reactStrictMode: true,
   swcMinify: true,
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
     domains: [
       'images.unsplash.com',

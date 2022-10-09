@@ -2,6 +2,9 @@ import Head from "next/head";
 import { Card } from "@components/card";
 import { IProduct } from "@interfaces/product";
 import { prisma } from 'src/utils/prisma';
+import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const Products = ({ jsonProducts }: { jsonProducts: string; }) => {
   const products: IProduct[] = JSON.parse(jsonProducts);
@@ -45,4 +48,15 @@ export async function getStaticProps() {
   };
 }
 
-export default Products;
+
+export default withPageAuthRequired(Products, {
+  onError: () => <div>You are not authenticated to visit this page directly</div>,
+  onRedirecting: () => <main className="content">
+    <section className="justify-center content__section">
+      <div className="relative px-12 py-8 text-xl text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
+        <strong className="font-bold">Wait! You are not authorized user! </strong>
+        <span className="block sm:inline">Redirecting to Login.</span>
+      </div>
+    </section>
+  </main>
+});
