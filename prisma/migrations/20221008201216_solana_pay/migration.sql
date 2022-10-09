@@ -26,7 +26,8 @@ CREATE TABLE `Product` (
     `description` VARCHAR(191) NOT NULL,
     `priceUSD` DOUBLE NOT NULL,
     `priceSOL` DOUBLE NOT NULL,
-    `orderId` VARCHAR(191) NULL,
+    `rating` DOUBLE NOT NULL,
+    `imageURL` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -39,14 +40,15 @@ CREATE TABLE `Product` (
 CREATE TABLE `Order` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
+    `products` VARCHAR(191) NOT NULL,
+    `status` ENUM('IN_CART', 'COMPLETED') NOT NULL DEFAULT 'IN_CART',
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
+    INDEX `Order_userId_idx`(`userId`),
+    UNIQUE INDEX `Order_userId_status_key`(`userId`, `status`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- AddForeignKey
-ALTER TABLE `Product` ADD CONSTRAINT `Product_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `Order`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Order` ADD CONSTRAINT `Order_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

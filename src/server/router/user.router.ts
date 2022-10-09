@@ -1,13 +1,13 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime';
 import { createUserSchema, getUserSchema, updateWalletSchema } from 'src/schema/user.schema';
 import * as trpc from '@trpc/server';
 import { createRouter } from '../createRouter';
 import { User } from '@prisma/client';
 
 const UNIQUE_CONTRAINT_ERROR_CODE = "P2002";
-
 async function handleError(error: any) {
     if (error instanceof PrismaClientKnownRequestError) {
+        console.log("user-error-code:::", error.code);
         if (error.code === UNIQUE_CONTRAINT_ERROR_CODE) {
             throw new trpc.TRPCError({
                 code: "CONFLICT",
@@ -19,6 +19,14 @@ async function handleError(error: any) {
             message: "Something went wrong"
         });
     }
+    if (error instanceof PrismaClientValidationError) {
+        console.log("user-error-name:::", error.name);
+        console.log("user-error-message:::", error.message);
+        throw new trpc.TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: error.message
+        });
+    }
 }
 
 export const userRouter = createRouter()
@@ -27,7 +35,7 @@ export const userRouter = createRouter()
         resolve: async ({ ctx, input }) => {
             const { name, nickname, picture, sid, sub, email, provider, email_verified } = input;
             try {
-                const user: User = await ctx.prisma.user.upsert({
+                const user = await ctx.prisma.user.upsert({
                     where: { email },
                     create: {
                         email,
@@ -45,8 +53,20 @@ export const userRouter = createRouter()
                         provider,
                         sid,
                         sub
+                    },
+                    select: {
+                        id: true,
+                        email: true,
+                        email_verified: true,
+                        name: true,
+                        nickname: true,
+                        picture: true,
+                        sid: true,
+                        sub: true,
+                        walletAddress: true
                     }
                 });
+                console.log("server-register-user:::", user);
                 return user;
             } catch (error) {
                 await handleError(error);
@@ -62,6 +82,11 @@ export const userRouter = createRouter()
                     where: { email },
                     data: { walletAddress }
                 });
+                return {
+                    ...user,
+                    created_at: user?.created_at.toString(),
+                    updated_at: user?.updated_at.toString()
+                };
             } catch (error) {
                 await handleError(error);
             }
@@ -75,7 +100,11 @@ export const userRouter = createRouter()
                 const user = await ctx.prisma.user.findUnique({
                     where: { email }
                 });
-                return user;
+                return {
+                    ...user,
+                    created_at: user?.created_at.toString(),
+                    updated_at: user?.updated_at.toString()
+                };
             } catch (error) {
                 await handleError(error);
             }

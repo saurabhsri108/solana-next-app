@@ -1,38 +1,38 @@
 [
   {
-    "id": "l1MYfu5YWHc",
+    "slug": "two-dungeon-espresso",
     "title": "Two Dungeon Espresso",
     "description": "Life gets better with espresso. Start your day with the refreshing taste of our personal favorite Espresso!",
+    "priceUSD": 6.99,
+    "priceSOL": 0.2,
     "rating": 5,
-    "priceUSD": 33.99,
-    "priceSOL": 0.99,
     "imageURL": "/assets/images/nathan-dumlao-coffee.jpeg"
   },
   {
-    "id": "l1MYfu5YWHd",
+    "slug": "two-dungeon-latte",
     "title": "Two Dungeon Latte",
     "description": "Life gets better with latte. Start your day with the refreshing taste of our personal favorite Latte!",
+    "priceUSD": 4.99,
+    "priceSOL": 0.15,
     "rating": 4,
-    "priceUSD": 66.99,
-    "priceSOL": 1.99,
     "imageURL": "/assets/images/nathan-dumlao-coffee-2.jpeg"
   },
   {
-    "id": "l1MYfu5YWHf",
-    "title": "Two Dungeon Latte",
-    "description": "Life gets better with latte. Start your day with the refreshing taste of our personal favorite Latte!",
+    "slug": "two-extra-black",
+    "title": "Two Extra Black",
+    "description": "Life gets better with extra black coffee. Start your day with the refreshing taste of our personal favorite Latte!",
     "rating": 2.3,
-    "priceUSD": 2.99,
-    "priceSOL": 0.01,
-    "imageURL": "/assets/images/nathan-dumlao-coffee-2.jpeg"
+    "priceUSD": 5.99,
+    "priceSOL": 0.18,
+    "imageURL": "/assets/images/rodolfo-quiros-coffee.jpg"
   },
   {
-    "id": "l1MYfu5YWHe",
+    "slug": "two-dungeon-black",
     "title": "Two Dungeon Black",
     "description": "Life gets better with black coffee. Start your day with the refreshing taste of our personal favorite Black Coffee!",
     "rating": 3.5,
-    "priceUSD": 99.99,
-    "priceSOL": 2.99,
+    "priceUSD": 3.99,
+    "priceSOL": 0.12,
     "imageURL": "/assets/images/nathan-dumlao-coffee-3.jpeg"
   }
 ]

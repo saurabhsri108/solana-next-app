@@ -17,6 +17,7 @@ import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adap
 import { withTRPC } from "@trpc/next";
 import { loggerLink } from "@trpc/client/links/loggerLink";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
+
 import superjson from 'superjson';
 
 import Header from "../components/header";
@@ -86,5 +87,5 @@ export default withTRPC<AppRouter>({
       links,
       transformer: superjson
     };
-  },
+  }
 })(MyApp);

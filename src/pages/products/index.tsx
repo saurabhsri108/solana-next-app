@@ -1,9 +1,10 @@
 import Head from "next/head";
 import { Card } from "@components/card";
 import { IProduct } from "@interfaces/product";
-import products from "../../data/coffee-data.json";
+import { prisma } from 'src/utils/prisma';
 
-const Products = ({ products }: { products: IProduct[] }) => {
+const Products = ({ jsonProducts }: { jsonProducts: string; }) => {
+  const products: IProduct[] = JSON.parse(jsonProducts);
   return (
     <>
       <Head>
@@ -19,6 +20,7 @@ const Products = ({ products }: { products: IProduct[] }) => {
               <Card
                 key={product.id}
                 id={product.id}
+                slug={product.slug}
                 title={product.title}
                 description={product.description}
                 priceUSD={product.priceUSD}
@@ -35,9 +37,10 @@ const Products = ({ products }: { products: IProduct[] }) => {
 };
 
 export async function getStaticProps() {
+  const products = await prisma?.product.findMany();
   return {
     props: {
-      products: products,
+      jsonProducts: JSON.stringify(products),
     },
   };
 }

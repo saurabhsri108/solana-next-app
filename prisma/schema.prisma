@@ -35,8 +35,8 @@ model Product {
   description String
   priceUSD    Float
   priceSOL    Float
-  order       Order?   @relation(fields: [orderId], references: [id])
-  orderId     String?
+  rating      Float
+  imageURL    String
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
@@ -44,10 +44,18 @@ model Product {
 }
 
 model Order {
-  id         String    @id @default(cuid())
-  user       User      @relation(fields: [userId], references: [id])
+  id         String       @id @default(cuid())
+  user       User         @relation(fields: [userId], references: [id])
   userId     String
-  products   Product[]
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
+  products   String
+  status     ORDER_STATUS @default(IN_CART)
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+
+  @@index([userId, status])
+}
+
+enum ORDER_STATUS {
+  IN_CART
+  COMPLETED
 }

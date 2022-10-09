@@ -1,6 +1,7 @@
 import { Fragment, useEffect } from "react";
 import Image from "next/future/image";
 import Link from "next/link";
+import { useRouter } from 'next/router';
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { toast } from "react-toastify";
 import { useUser } from '@auth0/nextjs-auth0';
@@ -11,23 +12,29 @@ import { CartIcon } from "./cart-icon";
 import { ButtonLoading } from '@components/loaders';
 
 import blankProfileImage from "public/assets/images/blank-profile.png";
+import { removeUser } from 'src/stores/slices/user-slice';
 
 export const ActionNavigations = () => {
   const { user, isLoading } = useUser();
   const { publicKey } = useWallet();
   const { mutate: updateWalletAddress, error: updateWalletAddressError } = trpc.useMutation(['users.update-wallet-address']);
-
+  const router = useRouter();
 
   useEffect(() => {
     if (publicKey && user && user.email) {
       updateWalletAddress({ email: user.email, walletAddress: publicKey.toString() }, {
         onError: () => {
           console.error(updateWalletAddressError);
-          toast.error(updateWalletAddressError?.message);
+          toast.error(updateWalletAddressError?.message, { toastId: 'wallet-update-error' });
         }
       });
     }
   }, [publicKey, user, updateWalletAddress, updateWalletAddressError]);
+
+  const handleLogout = () => {
+    removeUser();
+    router.push('/api/auth/logout');
+  };
 
   if (isLoading) {
     return <nav className="relative flex items-end justify-between gap-8">
@@ -72,9 +79,9 @@ export const ActionNavigations = () => {
           height={58}
         />
         <WalletMultiButton className="transition-all bg-primary text-default hover:scale-105 btn" style={{ height: "auto", lineHeight: "inherit" }} />
-        <Link href={"/api/auth/logout"} passHref={true}>
-          <a className="btn">Logout</a>
-        </Link>
+        <button className="btn" onClick={handleLogout}>
+          Logout
+        </button>
       </Fragment>
     </nav>
   );

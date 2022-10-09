@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import type { UseQueryResult } from 'react-query';
 
 import { useEffect, useState } from 'react';
 import Head from "next/head";
@@ -7,38 +8,86 @@ import Link from "next/link";
 import { trpc } from 'src/utils/trpc';
 import { useUser } from "@auth0/nextjs-auth0";
 import { toast } from "react-toastify";
-import { useRouter } from 'next/router';
+
+import { addUser } from 'src/stores/slices/user-slice';
 
 // @ts-ignore
 import homeCoffeeImage from "public/assets/images/ante-samarzija-coffee.jpeg";
+import { useAppDispatch } from 'src/stores/hooks';
+import { addToCart, clearCart } from 'src/stores/slices/cart-slice';
 
 const Home: NextPage = () => {
-  const { mutate: register, error: registerError } = trpc.useMutation(['users.register-user']);
+  const { mutate: register, data: userMutatedData, error: registerError } = trpc.useMutation(['users.register-user']);
+  const { data: orderData }: UseQueryResult<{ products: string; }> = trpc.useQuery(['orders.get-order', { userId: userMutatedData?.id!, status: "IN_CART" }], {
+    enabled: !!userMutatedData?.id && !!userMutatedData?.email_verified
+  });
+  const { data: productData } = trpc.useQuery(['products.get-products-by-ids', { ids: (orderData?.products! as string) }], {
+    enabled: !!orderData?.products
+  });
+
   const { user, error } = useUser();
-  const router = useRouter();
-  console.log(user);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (user) {
-      console.log('user-register');
-      const provider = user?.sub?.split('|')[0];
+      const provider = user.sub?.split('|')[0];
       register({
-        email: user?.email!,
-        email_verified: user?.email_verified!,
+        email: user.email!,
+        email_verified: user.email_verified!,
         provider: provider!,
-        sub: user?.sub!,
-        sid: user?.sid!,
-        name: user?.name!,
-        nickname: user?.nickname!,
-        picture: user?.picture!
+        sub: user.sub!,
+        sid: (user.sid! as string),
+        name: user.name!,
+        nickname: user.nickname!,
+        picture: user.picture!
       }, {
         onError: () => {
           console.error(registerError);
-          toast.error(registerError?.message);
+          toast.error(registerError?.message, { toastId: 'user-register-error' });
         }
       });
     }
   }, [register, user, registerError]);
+
+  useEffect(() => {
+    if (userMutatedData) {
+      dispatch(
+        addUser({
+          id: userMutatedData.id,
+          email: userMutatedData.email,
+          email_verified: userMutatedData.email_verified,
+          name: userMutatedData.name!,
+          nickname: userMutatedData.nickname!,
+          picture: userMutatedData.picture!,
+          sid: userMutatedData.sid!,
+          sub: userMutatedData.sub!,
+          walletAddress: userMutatedData.walletAddress!
+        })
+      );
+    }
+  }, [userMutatedData, dispatch]);
+
+  useEffect(() => {
+    if (productData) {
+      console.log({ productData });
+      const productIds = productData.map(data => data.id);
+      localStorage.setItem('productIds', productIds.toString());
+      for (const product of productData) {
+        dispatch(
+          addToCart({
+            id: product.id,
+            slug: product.slug,
+            title: product.title,
+            imageURL: product.imageURL,
+            description: product.description,
+            priceSOL: product.priceSOL,
+            priceUSD: product.priceUSD,
+            rating: product.rating,
+          })
+        );
+      }
+    }
+  }, [productData, dispatch]);
 
   if (error) {
     toast.error("Error in Auth0: " + error.message, {
@@ -48,10 +97,9 @@ const Home: NextPage = () => {
 
   if (user && !user.email_verified) {
     toast.info("Please verify your account from the link sent to your email!", {
-      toastId: 'sent-user-verification-mail',
-      position: "top-center",
-
+      toastId: 'sent-user-verification-mail'
     });
+    clearCart();
     fetch('/api/auth/logout').catch(error => console.error(error.message));
   }
 
@@ -95,5 +143,6 @@ const Home: NextPage = () => {
     </>
   );
 };
+
 
 export default Home;
