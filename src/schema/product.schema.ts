@@ -15,3 +15,9 @@ export const productByIdsSchema = z.object({
     ids: z.string()
 });
 export type ProductByIdsSchema = z.infer<typeof productByIdsSchema>;
+
+export const getTotalPriceSchema = z.object({
+    paymentMethod: z.enum(['sol', 'usd', 'qr-sol', 'qr-usd']),
+    productIds: z.string()
+});
+export type GetTotalPriceSchema = z.infer<typeof getTotalPriceSchema>;

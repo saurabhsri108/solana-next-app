@@ -1,7 +1,9 @@
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime';
-import { productByIdsSchema, productSchema } from 'src/schema/product.schema';
+import { getTotalPriceSchema, productByIdsSchema, productSchema } from 'src/schema/product.schema';
 import * as trpc from '@trpc/server';
 import { createRouter } from '../createRouter';
+import BigNumber from 'bignumber.js';
+import { prisma } from 'src/utils/prisma';
 
 const UNIQUE_CONTRAINT_ERROR_CODE = "P2002";
 async function handleError(error: any) {
@@ -53,5 +55,30 @@ export const productRouter = createRouter()
             } catch (error) {
                 handleError(error);
             }
+        }
+    })
+    .query('get-total-price', {
+        input: getTotalPriceSchema,
+        resolve: async ({ ctx, input }) => {
+            const { paymentMethod, productIds } = input;
+            let amount = new BigNumber(0);
+            if (!!productIds) {
+                const productIdS = productIds.split(",");
+                const storedProducts = await prisma.product.findMany({
+                    where: { id: { in: productIdS } }
+                });
+                for (const product of storedProducts) {
+                    if (paymentMethod === 'usd' || paymentMethod === 'qr-usd') {
+                        amount = amount.plus(product.priceUSD);
+                    }
+                    if (paymentMethod === 'sol' || paymentMethod === 'qr-sol') {
+                        amount = amount.plus(product.priceSOL);
+                    }
+                }
+            }
+            const price = new BigNumber(amount.toFixed(2));
+            const shipping = new BigNumber(price.multipliedBy(0.2).toFixed(2));
+            const totalPrice = new BigNumber(price.plus(shipping).toFixed(2));
+            return { price, shipping, totalPrice };
         }
     });

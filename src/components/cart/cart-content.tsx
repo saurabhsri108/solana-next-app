@@ -5,9 +5,10 @@ import { CartItems } from "./cart-items";
 import { useAppSelector } from "../../stores/hooks";
 
 import type { IProduct } from "@interfaces/product";
+import type { IPaymentMethod } from '@interfaces/payment-method';
 
 const CartContent = ({ paymentMethod }: {
-  paymentMethod: "usd" | "sol";
+  paymentMethod: IPaymentMethod;
 }) => {
   const cartItems: IProduct[] = useAppSelector((state) => state.cart.items);
   const cartItemsCount: number = useAppSelector(
@@ -61,7 +62,7 @@ const CartContent = ({ paymentMethod }: {
             <span>Total Items</span>
             <span>{cartItemsCount}</span>
           </div>
-          {paymentMethod === "usd" && (
+          {(paymentMethod === "usd" || paymentMethod === 'qr-usd') && (
             <Fragment>
               <div className="flex items-center justify-between">
                 <span>Total Charges</span>
@@ -73,7 +74,7 @@ const CartContent = ({ paymentMethod }: {
               </div>
             </Fragment>
           )}
-          {paymentMethod === "sol" && (
+          {(paymentMethod === "sol" || paymentMethod === 'qr-sol') && (
             <Fragment>
               <div className="flex items-center justify-between">
                 <span>Total Charges</span>
@@ -88,10 +89,10 @@ const CartContent = ({ paymentMethod }: {
         </section>
         <section className="flex items-center justify-between py-4 my-4 text-3xl font-bold leading-relaxed tracking-wide border-t font-heading border-t-secondary">
           <h2>Total</h2>
-          {paymentMethod === "usd" && (
+          {(paymentMethod === "usd" || paymentMethod === 'qr-usd') && (
             <h2>${(totalChargesUSD + totalChargesUSD * 0.2).toFixed(2)}</h2>
           )}
-          {paymentMethod === "sol" && (
+          {(paymentMethod === "sol" || paymentMethod === 'qr-sol') && (
             <h2>◎{(totalChargesSOL + totalChargesSOL * 0.2).toFixed(2)}</h2>
           )}
         </section>

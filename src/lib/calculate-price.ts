@@ -11,10 +11,10 @@ export default async function calculatePrice(query: ParsedUrlQuery): Promise<{ p
             where: { id: { in: productIds } }
         });
         for (const product of storedProducts) {
-            if (paymentMethod === 'usd') {
+            if (paymentMethod === 'usd' || paymentMethod === 'qr-usd') {
                 amount = amount.plus(product.priceUSD);
             }
-            if (paymentMethod === 'sol') {
+            if (paymentMethod === 'sol' || paymentMethod === 'qr-sol') {
                 amount = amount.plus(product.priceSOL);
             }
         }

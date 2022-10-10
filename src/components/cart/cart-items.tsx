@@ -1,17 +1,18 @@
 import Image from "next/future/image";
 
 import type { IProduct } from "@interfaces/product";
+import type { IPaymentMethod } from '@interfaces/payment-method';
 
 export const CartItems = ({
   cartItem,
   paymentMethod,
 }: {
   cartItem: IProduct;
-  paymentMethod: "sol" | "usd";
+  paymentMethod: IPaymentMethod;
 }) => {
   return (
     <div className="flex items-start justify-between py-3 border-b border-b-border">
-      <div className="flex items-start justify-between gap-4 w-9/12">
+      <div className="flex items-start justify-between w-9/12 gap-4">
         <Image
           src={cartItem.imageURL}
           alt={cartItem.title}
@@ -26,11 +27,11 @@ export const CartItems = ({
           <p className="text-lg sm:text-2xl">{cartItem.description}</p>
         </div>
       </div>
-      <div className="flex flex-col items-end gap-2 text-xl font-bold lg:text-3xl font-heading w-3/12">
-        {paymentMethod === "usd" && (
+      <div className="flex flex-col items-end w-3/12 gap-2 text-xl font-bold lg:text-3xl font-heading">
+        {(paymentMethod === "usd" || paymentMethod === 'qr-usd') && (
           <span>${cartItem.priceUSD.toFixed(2)}</span>
         )}
-        {paymentMethod === "sol" && (
+        {(paymentMethod === "sol" || paymentMethod === 'qr-sol') && (
           <span>◎{cartItem.priceSOL.toFixed(2)}</span>
         )}
       </div>
