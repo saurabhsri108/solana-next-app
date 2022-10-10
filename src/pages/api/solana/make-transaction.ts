@@ -1,7 +1,8 @@
+import { createTransferCheckedInstruction, getAssociatedTokenAddress, getMint, Mint } from '@solana/spl-token';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { clusterApiUrl, Connection, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { shopAddress } from 'src/lib/addresses';
+import { shopAddress, usdcAddress } from 'src/lib/addresses';
 import calculatePrice from 'src/lib/calculate-price';
 import { IErrorOutput, IMakeTransactionInputData, IMakeTransactionOutputData } from 'src/schema/solana.schema';
 import { prisma } from 'src/utils/prisma';
@@ -44,19 +45,41 @@ export default async function handler(
         const endpoint = clusterApiUrl(network);
         const connection = new Connection(endpoint);
 
+        let { paymentMethod } = req.query;
+        let usdcMint: Mint, buyerUsdcAddress: PublicKey, shopUsdcAddress: PublicKey;
+        if (paymentMethod === 'usd') {
+            usdcMint = await getMint(connection, usdcAddress); // get details of the USDC token
+            buyerUsdcAddress = await getAssociatedTokenAddress(usdcAddress, buyerPublicKey); // get the buyer's USDC token account address
+            shopUsdcAddress = await getAssociatedTokenAddress(usdcAddress, shopPublicKey); // get the seller's USDC token account address
+        }
+
         // Retrieve the recent blockhash to include in the transaction
         const { blockhash } = await (connection.getLatestBlockhash('finalized'));
 
         const transaction = new Transaction({
             recentBlockhash: blockhash,
-            feePayer: buyerPublicKey
+            feePayer: buyerPublicKey // buyer is paying the transaction fees here
         });
-        // Create instructions for sending SOL to shop from buyer
-        const transInstruction = SystemProgram.transfer({
-            fromPubkey: buyerPublicKey,
-            lamports: totalPrice.multipliedBy(LAMPORTS_PER_SOL).toNumber(),
-            toPubkey: shopPublicKey
-        });
+
+        let transInstruction;
+        if (paymentMethod === 'usd') {
+            // Create the instruction to send USDC from the buyer to the shop
+            transInstruction = createTransferCheckedInstruction(
+                buyerUsdcAddress!, // source
+                usdcAddress, // mint token address
+                shopUsdcAddress!, // destination
+                buyerPublicKey, // owner of source address,
+                totalPrice.toNumber() * (10 ** (await usdcMint!).decimals), // amount to transfer (USDC units)
+                usdcMint!.decimals, // decimals of the USDC token
+            );
+        } else {
+            // Create instructions for sending SOL to shop from buyer
+            transInstruction = SystemProgram.transfer({
+                fromPubkey: buyerPublicKey,
+                lamports: totalPrice.multipliedBy(LAMPORTS_PER_SOL).toNumber(),
+                toPubkey: shopPublicKey
+            });
+        }
 
         // Add reference to the instruction as a key - helps query for this transaction using reference from FE to know the payment status
         transInstruction.keys.push({
@@ -76,8 +99,10 @@ export default async function handler(
         console.log(base64Transaction, base64Transaction.length);
         // modify the database
         const { orderId } = req.body as IMakeTransactionInputData;
-        const { paymentMethod } = req.query;
         const status = "IN_CART";
+        if (paymentMethod === 'usd') {
+            paymentMethod = 'USDC';
+        }
         await prisma.$queryRaw`
                         UPDATE
                             railway.Order

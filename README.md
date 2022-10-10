@@ -50,7 +50,7 @@ pay for their online purchases.
 - [ ] Implement Solana Pay
   - [x] Get Devnet SOL from [Solfaucet](https://solfaucet.com/). Only 1 unit allowed per request.
   - [x] Complete the SOL Desktop flow.
-  - [ ] Get the USDC from **blank**
+  - [x] Get the USDC-Dev - Token starts with [Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr] ($1000) from [Solfaucet-USDC-DEV](https://spl-token-faucet.com/?token-name=USDC-Dev). You must have SOL amount (DEV NETWORK) in your wallet.
   - [ ] Complete the USDC Desktop Flow.
   - [ ] Implement SOL and USDC mobile QR Scanner Flow
   - [ ] Implement Loyalty program
