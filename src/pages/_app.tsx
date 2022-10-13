@@ -31,7 +31,7 @@ import "../styles/solana-wallet-react-ui.css";
 import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const network = process.env.NODE_ENV === 'development' ? WalletAdapterNetwork.Devnet : WalletAdapterNetwork.Testnet; // can be set to 'devnet',
+  const network = WalletAdapterNetwork.Devnet; // can be set to 'devnet',
   // 'testnet', or 'mainnet-beta'
   const endpoint = clusterApiUrl(network); // custom RPC endpoint can be
   // provided here as well
