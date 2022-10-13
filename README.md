@@ -53,8 +53,13 @@ pay for their online purchases.
   - [x] Get the USDC-Dev - Token starts with [Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr] ($1000) from [Solfaucet-USDC-DEV](https://spl-token-faucet.com/?token-name=USDC-Dev). You must have SOL amount (DEV NETWORK) in your wallet.
   - [x] Complete the USDC Desktop Flow.
   - [ ] Implement Point of Sale Page for accepting SOL and USDC using mobile QR Scanner Flow: Needs mobile wallet download in Android or iOS. Download [Phantom wallet](https://phantom.app/download)
-  - [ ] Implement Loyalty program
 - [ ] Test the complete app
+
+## Future Todos
+
+- Build a transaction without available js tools.
+- Use different technologies for server side - SpringBoot, Go, Rust, Express TS.
+- Separate FE and BE.
 
 ## Findings
 
@@ -139,3 +144,44 @@ Wallets should display the memo to the user. The SPL Memo instruction must be in
   ```js
   solana:mvines9iiHiQTysrwkJjGf2gb9Ex9jXJX8ns3qwf2kN?amount=0.01&spl-token=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&label=Michael&message=Thanks%20for%20all%20the%20fish&memo=OrderId5678
   ```
+
+### Transaction Request [Source](https://docs.solanapay.com/core/transaction-request/overview)
+
+![general-image](https://docs.solanapay.com/assets/images/transaction-request-flow-dark-5bfeda8bfaf7cc66a89aed62b1b2db60.png)
+
+**Best Practices [Source](https://docs.solanapay.com/core/transaction-request/merchant-integration)**
+
+1. Customer goes to the payment page
+2. Merchant frontend (client) sends order information to the backend
+3. Merchant backend (server) generates a reference public key and stores it in a database with the expected amount for the shopping cart / pending purchase (unique to each customer's checkout session).
+4. Merchant backend redirects the user to the confirmation page with the generated reference public key.
+5. The confirmation page redirects to the merchant with the transaction signature.
+6. Merchant backend checks that the transaction is valid for the checkout session by validating the transaction with the reference and amount stored in step 3.
+
+### Transfer Request [Source](https://docs.solanapay.com/core/transfer-request/overview)
+
+**Web App to Mobile Wallet**
+![image](https://docs.solanapay.com/assets/images/web-app-mobile-wallet-flow-dark-9b539ef48a77983233419dc0a8a51b95.png)
+
+**Web App to Browser Wallet**
+![image](https://docs.solanapay.com/assets/images/web-app-browser-wallet-dark-e45414f2f8471974d9226edd8191f220.png)
+
+**Mobile App to Mobile Wallet**
+![image](https://docs.solanapay.com/assets/images/mobile-app-mobile-wallet-flow-dark-7cfdb24237207bba52973c2939e84e37.png)
+
+**Best practices**
+![image](https://docs.solanapay.com/assets/images/transfer-request-best-practice-dark-51b7f36233131701e7f9b9b232f65f61.png)
+
+1. Customer goes to the payment page
+2. Merchant frontend (client) sends order information to the backend
+3. Merchant backend (server) generates a reference public key and stores it in a database with the expected amount for the shopping cart / pending purchase (unique to each customer's checkout session).
+4. Merchant backend redirects the user to the confirmation page with the generated reference public key.
+5. The confirmation page redirects to the merchant with the transaction signature.
+6. Merchant backend checks that the transaction is valid for the checkout session by validating the transaction with the reference and amount stored in step 3.
+
+   The steps outlined above prevents:
+
+   - A different transaction from being used to trick the merchant
+   - The frontend from being manipulated to show a confirmed transaction
+
+### [API Request Docs](https://docs.solanapay.com/api/core)

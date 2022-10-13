@@ -69,7 +69,7 @@ export default async function handler(
                 usdcAddress, // mint token address
                 shopUsdcAddress!, // destination
                 buyerPublicKey, // owner of source address,
-                totalPrice.toNumber() * (10 ** (await usdcMint!).decimals), // amount to transfer (USDC units)
+                totalPrice.toNumber() * (10 ** (usdcMint!).decimals), // amount to transfer (USDC units)
                 usdcMint!.decimals, // decimals of the USDC token
             );
         } else {

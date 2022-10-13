@@ -17,7 +17,7 @@ async function handleError(error: any) {
         }
         throw new trpc.TRPCError({
             code: "INTERNAL_SERVER_ERROR",
-            message: "Something went wrong"
+            message: "Something went wrong in product"
         });
     }
     if (error instanceof PrismaClientValidationError) {

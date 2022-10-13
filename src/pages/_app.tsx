@@ -35,7 +35,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   // 'testnet', or 'mainnet-beta'
   const endpoint = clusterApiUrl(network); // custom RPC endpoint can be
   // provided here as well
-  const wallets = useMemo(() => [new PhantomWalletAdapter({ network }), new SolflareWalletAdapter({ network })], [network]); // @solana/wallet-adapter-wallets supports multiple wallets of SOLANA and comes with treeshaking feature. Only mentioned wallet is included.
+  const wallets = useMemo(() => [new PhantomWalletAdapter(), new SolflareWalletAdapter({ network })], [network]); // @solana/wallet-adapter-wallets supports multiple wallets of SOLANA and comes with treeshaking feature. Only mentioned wallet is included.
   return (
     <Provider store={store}>
       <UserProvider>
@@ -80,7 +80,7 @@ export default withTRPC<AppRouter>({
         if (ctx?.req) {
           return {
             ...ctx.req.headers,
-            'x-ssr': '1' // request is done on the server with this line
+            //'x-ssr': '1' // request is done on the server with this line
           };
         }
       },
