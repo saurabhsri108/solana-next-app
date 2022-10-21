@@ -7,7 +7,7 @@ import { User } from '@prisma/client';
 const UNIQUE_CONTRAINT_ERROR_CODE = "P2002";
 async function handleError(error: any) {
     if (error instanceof PrismaClientKnownRequestError) {
-        console.log("user-error-code:::", error.code);
+        console.error("user-error-code:::", error.code);
         if (error.code === UNIQUE_CONTRAINT_ERROR_CODE) {
             throw new trpc.TRPCError({
                 code: "CONFLICT",
@@ -20,8 +20,8 @@ async function handleError(error: any) {
         });
     }
     if (error instanceof PrismaClientValidationError) {
-        console.log("user-error-name:::", error.name);
-        console.log("user-error-message:::", error.message);
+        console.error("user-error-name:::", error.name);
+        console.error("user-error-message:::", error.message);
         throw new trpc.TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: error.message
@@ -66,7 +66,7 @@ export const userRouter = createRouter()
                         walletAddress: true
                     }
                 });
-                console.log("server-register-user:::", user);
+                // console.log("server-register-user:::", user);
                 return user;
             } catch (error) {
                 await handleError(error);

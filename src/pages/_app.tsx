@@ -19,9 +19,6 @@ import { loggerLink } from "@trpc/client/links/loggerLink";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 
 import superjson from 'superjson';
-
-import Header from "../components/header";
-import Footer from "../components/footer";
 import { store } from "../stores/store";
 
 import "@fontsource/bellefair";
@@ -42,9 +39,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <ConnectionProvider endpoint={endpoint}>
           <WalletProvider wallets={wallets}>
             <WalletModalProvider>
-              <Header />
               <Component {...pageProps} />
-              <Footer />
               <ToastContainer transition={Flip} theme="colored" />
             </WalletModalProvider>
           </WalletProvider>

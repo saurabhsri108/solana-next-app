@@ -14,7 +14,7 @@ export default async function handler(
     try {
         // Passed from FE the selected items in the query, to calculate the original cost.
         const { price, shipping, totalPrice } = await calculatePrice(req.query);
-        console.log({ price, shipping, totalPrice });
+        // console.log({ price, shipping, totalPrice });
         if (price.toNumber() === 0) {
             res.status(400).json({ error: "Your total amount is 0. You must add some products!" });
             return;
@@ -96,7 +96,7 @@ export default async function handler(
             requireAllSignatures: false // need the buyer to sign this transaction after it's returned to the FE for them
         });
         const base64Transaction = serializedTransaction.toString('base64');
-        console.log(base64Transaction, base64Transaction.length);
+        // console.log(base64Transaction, base64Transaction.length);
         // modify the database
         const { orderId } = req.body as IMakeTransactionInputData;
         const status = "IN_CART";

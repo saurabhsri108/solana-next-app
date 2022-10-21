@@ -8,7 +8,7 @@ import { prisma } from 'src/utils/prisma';
 const UNIQUE_CONTRAINT_ERROR_CODE = "P2002";
 async function handleError(error: any) {
     if (error instanceof PrismaClientKnownRequestError) {
-        console.log("product-error-code:::", error.code);
+        console.error("product-error-code:::", error.code);
         if (error.code === UNIQUE_CONTRAINT_ERROR_CODE) {
             throw new trpc.TRPCError({
                 code: "CONFLICT",
@@ -21,8 +21,8 @@ async function handleError(error: any) {
         });
     }
     if (error instanceof PrismaClientValidationError) {
-        console.log("product-error-name:::", error.name);
-        console.log("product-error-message:::", error.message);
+        console.error("product-error-name:::", error.name);
+        console.error("product-error-message:::", error.message);
         throw new trpc.TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: error.message

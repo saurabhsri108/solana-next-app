@@ -19,7 +19,7 @@ const CartContent = ({ paymentMethod }: {
     return router.push("/products");
   };
 
-  console.log({ paymentMethod });
+  // console.log({ paymentMethod });
 
   let cartContent = <p>Loading cart items...</p>;
   if (Array.isArray(cartItems) && cartItems.length === 0) {
@@ -42,7 +42,7 @@ const CartContent = ({ paymentMethod }: {
     cartContent = (
       <Fragment>
         {cartItems.map((item) => {
-          console.log({ item });
+          // console.log({ item });
           totalChargesSOL = Number(
             (totalChargesSOL + item.priceSOL).toFixed(2)
           );

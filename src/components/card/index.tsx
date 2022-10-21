@@ -57,7 +57,7 @@ export const Card = ({
       productIds = id;
       localStorage.setItem("productIds", id);
     }
-    console.log({ userId });
+    // console.log({ userId });
     orderMutate({
       userId: userId!,
       products: productIds,

@@ -22,7 +22,7 @@ export const cartSlice = createSlice({
       const newProducts = [action.payload];
       const oldProducts = state.items;
       const mergedProducts = mergeArrayOfObjects<IProduct>(oldProducts, newProducts);
-      console.log({ newProducts, oldProducts, mergedProducts });
+      // console.log({ newProducts, oldProducts, mergedProducts });
       state.items = mergedProducts;
       state.itemCount = mergedProducts.length;
     },

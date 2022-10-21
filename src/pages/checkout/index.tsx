@@ -32,8 +32,6 @@ import { addSignatureToOrder } from 'src/stores/slices/cart-slice';
 import type { ICheckoutForm, IShippingForm } from "@interfaces/form";
 import type { IPaymentMethod } from '@interfaces/payment-method';
 import { shopAddress, usdcAddress } from 'src/lib/addresses';
-import calculatePrice from 'src/lib/calculate-price';
-import { ParsedUrlQuery } from 'querystring';
 import BigNumber from 'bignumber.js';
 
 const Checkout = () => {
@@ -114,12 +112,12 @@ const Checkout = () => {
         }
     }, [paymentMethod, priceData, reference]);
 
-    console.log({ transaction, message, orderData, urlParams, paymentMethod });
+    // console.log({ transaction, message, orderData, urlParams, paymentMethod });
 
     useEffect(() => {
         if (urlParams) {
             const url = encodeURL(urlParams);
-            console.log({ url: url.toString() });
+            // console.log({ url: url.toString() });
             if (url) {
                 const qr = createQR(url, 256, 'transparent');
                 if (qrRef.current && priceData && new BigNumber(priceData.totalPrice).isGreaterThan(0)) {
@@ -207,7 +205,7 @@ const Checkout = () => {
                     console.error('Transaction is invalid', e);
                     return;
                 }
-                console.log("Unknown error", e);
+                console.error("Unknown error", e);
                 toast.error("Unknown Error");
             }
         }, 500);
@@ -224,9 +222,9 @@ const Checkout = () => {
         try {
             await sendTransaction(transaction, connection);
             setTransactionSent(true);
-            console.log({ transaction, connection });
+            // console.log({ transaction, connection });
         } catch (error: any) {
-            console.log(error);
+            console.error(error);
             toast.error(error.message, { toastId: 'send-transaction-error', autoClose: 4000 });
         }
     }
@@ -269,7 +267,7 @@ const Checkout = () => {
         const transaction = Transaction.from(Buffer.from(json.transaction, 'base64'));
         setTransaction(transaction);
         setMessage(json.message);
-        console.log({ transaction });
+        // console.log({ transaction });
     };
 
     return (
@@ -392,4 +390,4 @@ const Checkout = () => {
     );
 };
 
-export default Checkout;
+export default withPageAuthRequired(Checkout);

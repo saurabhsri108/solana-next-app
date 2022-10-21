@@ -13,8 +13,8 @@ const seedProductTable = async () => {
             ...productData
         ]
     });
-    console.log("Product db data");
-    console.log(products);
+    // console.log("Product db data");
+    // console.log(products);
     disconnectPrisma();
 };
 

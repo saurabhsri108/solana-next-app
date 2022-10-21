@@ -17,7 +17,7 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         addUser: (state, action: PayloadAction<DBUserSchema>) => {
-            console.log({ user: action.payload });
+            // console.log({ user: action.payload });
             state.user = action.payload;
             state.userId = action.payload.id;
         },

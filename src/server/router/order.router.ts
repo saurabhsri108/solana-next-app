@@ -9,7 +9,7 @@ const UNIQUE_CONTRAINT_ERROR_CODE = "P2002";
 const RAW_QUERY_ERROR_CODE = "P2010";
 async function handleError(error: any) {
     if (error instanceof PrismaClientKnownRequestError) {
-        console.log("order-error-code:::", error.code);
+        // console.log("order-error-code:::", error.code);
         if (error.code === UNIQUE_CONTRAINT_ERROR_CODE) {
             throw new trpc.TRPCError({
                 code: "CONFLICT",
@@ -25,8 +25,8 @@ async function handleError(error: any) {
         });
     }
     if (error instanceof PrismaClientValidationError) {
-        console.log("order-error-name:::", error.name);
-        console.log("order-error-message:::", error.message);
+        // console.log("order-error-name:::", error.name);
+        // console.log("order-error-message:::", error.message);
         throw new trpc.TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: error.message
@@ -44,8 +44,8 @@ export const orderRouter = createRouter()
                 const existingOrder = await ctx.prisma.order.count({
                     where: { userId: userId, status: status }
                 });
-                console.log({ userId, products, status });
-                console.log("server-existing-order:::", existingOrder);
+                // console.log({ userId, products, status });
+                // console.log("server-existing-order:::", existingOrder);
                 if (existingOrder) {
                     order = await ctx.prisma.$queryRaw`
                         UPDATE
@@ -102,9 +102,9 @@ export const orderRouter = createRouter()
         resolve: async ({ ctx, input }) => {
             const { userId, status } = input;
             try {
-                console.log({ userId, status });
+                // console.log({ userId, status });
                 const orderCount = await ctx.prisma.order.count({ where: { userId, status } });
-                console.log({ orderCount, "!orderCount": !orderCount });
+                // console.log({ orderCount, "!orderCount": !orderCount });
                 if (!orderCount) {
                     return {};
                 }
