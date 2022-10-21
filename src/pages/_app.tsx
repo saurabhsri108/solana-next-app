@@ -26,6 +26,8 @@ import "@fontsource/roboto-condensed";
 import 'react-toastify/dist/ReactToastify.css';
 import "../styles/solana-wallet-react-ui.css";
 import "../styles/globals.css";
+import Header from '@components/header';
+import Footer from '@components/footer';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const network = WalletAdapterNetwork.Devnet; // can be set to 'devnet',
@@ -39,7 +41,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <ConnectionProvider endpoint={endpoint}>
           <WalletProvider wallets={wallets}>
             <WalletModalProvider>
+              <Header />
               <Component {...pageProps} />
+              <Footer />
               <ToastContainer transition={Flip} theme="colored" />
             </WalletModalProvider>
           </WalletProvider>

@@ -15,8 +15,6 @@ import { addToCart, clearCart } from 'src/stores/slices/cart-slice';
 
 // @ts-ignore
 import homeCoffeeImage from "public/assets/images/ante-samarzija-coffee.jpeg";
-import Footer from '@components/footer';
-import Header from '@components/header';
 
 const Home: NextPage = () => {
   const { mutate: register, data: userMutatedData, error: registerError } = trpc.useMutation(['users.register-user']);
@@ -124,7 +122,6 @@ const Home: NextPage = () => {
           Beans Coffee Shoppe - Experience the best the world has to offer
         </title>
       </Head>
-      <Header />
       <main className="content">
         <section className="content__section">
           <div className="relative mx-auto overflow-hidden sm:flex-1 sm:order-2 w-[100%] h-[500px] lg:h-[640px]">
@@ -153,7 +150,6 @@ const Home: NextPage = () => {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 };

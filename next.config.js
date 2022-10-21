@@ -2,7 +2,7 @@
 const nextConfig = {
   productionBrowserSourceMaps: true,
   reactStrictMode: true,
-  swcMinify: false,
+  swcMinify: true,
   typescript: {
     ignoreBuildErrors: true,
   },

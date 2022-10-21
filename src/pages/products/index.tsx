@@ -3,8 +3,6 @@ import { Card } from "@components/card";
 import { IProduct } from "@interfaces/product";
 import { prisma } from 'src/utils/prisma';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import Header from '@components/header';
-import Footer from '@components/footer';
 
 const Products = ({ jsonProducts }: { jsonProducts: string; }) => {
   const products: IProduct[] = JSON.parse(jsonProducts);
@@ -16,7 +14,6 @@ const Products = ({ jsonProducts }: { jsonProducts: string; }) => {
           to offer
         </title>
       </Head>
-      <Header />
       <main className="content">
         <section className="content__section">
           <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
@@ -36,7 +33,6 @@ const Products = ({ jsonProducts }: { jsonProducts: string; }) => {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 };

@@ -52,14 +52,16 @@ pay for their online purchases.
   - [x] Complete the SOL Desktop flow.
   - [x] Get the USDC-Dev - Token starts with [Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr] ($1000) from [Solfaucet-USDC-DEV](https://spl-token-faucet.com/?token-name=USDC-Dev). You must have SOL amount (DEV NETWORK) in your wallet.
   - [x] Complete the USDC Desktop Flow.
-  - [ ] Implement Point of Sale Page for accepting SOL and USDC using mobile QR Scanner Flow: Needs mobile wallet download in Android or iOS. Download [Phantom wallet](https://phantom.app/download)
-- [ ] Test the complete app
+  - [x] Implement Point of Sale Page for accepting SOL and USDC using mobile QR Scanner Flow: Needs mobile wallet download in Android or iOS. Download [Phantom wallet](https://phantom.app/download)
+- [x] Test the complete app
 
 ## Future Todos
 
 - Build a transaction without available js tools.
 - Use different technologies for server side - SpringBoot, Go, Rust, Express TS.
 - Separate FE and BE.
+- Loyalty Program in Solana Pay
+- Tighten the app security and remove defects. This is just a POC app. Doesn't follow best practices.
 
 ## Findings
 

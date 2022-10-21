@@ -3,7 +3,6 @@ import { getTotalPriceSchema, productByIdsSchema, productSchema } from 'src/sche
 import * as trpc from '@trpc/server';
 import { createRouter } from '../createRouter';
 import BigNumber from 'bignumber.js';
-import { prisma } from 'src/utils/prisma';
 
 const UNIQUE_CONTRAINT_ERROR_CODE = "P2002";
 async function handleError(error: any) {
@@ -64,7 +63,7 @@ export const productRouter = createRouter()
             let amount = new BigNumber(0);
             if (!!productIds) {
                 const productIdS = productIds.split(",");
-                const storedProducts = await prisma.product.findMany({
+                const storedProducts = await ctx.prisma.product.findMany({
                     where: { id: { in: productIdS } }
                 });
                 for (const product of storedProducts) {
