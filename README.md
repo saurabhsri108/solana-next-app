@@ -54,6 +54,8 @@ pay for their online purchases.
   - [x] Complete the USDC Desktop Flow.
   - [x] Implement Point of Sale Page for accepting SOL and USDC using mobile QR Scanner Flow: Needs mobile wallet download in Android or iOS. Download [Phantom wallet](https://phantom.app/download)
 - [x] Test the complete app
+  - [x] Issue with localStorage mechanism of storing productIds - POC so it's fine.
+  - [x] Forgot to add DB entry of prices and transaction blocks for QR payments from the FE. Can be left as it's a POC.
 
 ## Future Todos
 
