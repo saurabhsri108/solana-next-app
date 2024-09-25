@@ -1,6 +1,6 @@
 # Solana NextJS POC
 
-This app is built as a part of R&D process within my organisation. It creates a simple app where one can use Solana to
+This app is built as a part of R&D process. It creates a simple app where one can use Solana to
 pay for their online purchases.
 
 ## Technologies
